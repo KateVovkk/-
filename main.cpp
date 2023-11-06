@@ -1,58 +1,62 @@
-
-#include <stdio.h>
-#include <iostream>
-#include <cstring>
-#include <clocale>
-using namespace std;
-    
-int main()
-{
-    setlocale(LC_ALL,"russian");    
-	int size;
-	cout << "Введите количество книг в библиотеке ";
-	cin >> size;
-	char**names = new char*[size];
-	char**author = new char*[size];
-	int*god = new int[size];
-	int*kopii = new int[size];
-	cin.ignore();
-	for (int i = 0; i<size; ++i)
-	{
-		char buffer[100];
-		char buffer1[100];
-		cout << "Введите название книги ";
-		cin.getline(buffer,100);
-		names[i] = new char[strlen(buffer)];
-		strcpy(names[i], buffer);
-		cout << "Введите автора книги ";
-		cin.getline(buffer1,100);
-		author[i] = new char[strlen(buffer1)];
-		strcpy(author[i], buffer1);
-		cout << "Введите год издания книги ";
-		cin >> god[i];
-		cout << "Введите количество копий ";
-		cin >> kopii[i];
-		cin.ignore();
-	}
-	for (int i = 0; i<size-1; ++i)
-	{
-		for (int j = 0; j<size-i-1; ++j)
-		{
-			if (strcmp(names[j], names[j+1])>0)
-			{
-				swap(names[j], names[j+1]);
-				swap(author[j], author[j+1]);
-				swap(god[j], god[j+1]);
-				swap(kopii[j], kopii[j+1]);
-			}
-		}
-	}
-	for (int i = 0; i<size; ++i)
-	{
-		cout << names[i] << ":"<< " Автор - " << author[i] << ",  Год издания - " << god[i] <<"г"<< " , Количество копий - " << kopii[i]<< endl; 
-	}
-	return 0;
+#include <stdio.h> 
+#include <iostream> 
+#include <cstring> 
+#include <clocale> 
+using namespace std; 
+     
+int main() 
+{ 
+    setlocale(LC_ALL,"russian");     
+ int size; 
+ cout << "Введите количество книг в библиотеке "; 
+ cin >> size; 
+ char**names = new char*[size]; 
+ char**author = new char*[size]; 
+ int*god = new int[size]; 
+ int*kopii = new int[size]; 
+ cin.ignore(); 
+ for (int i = 0; i<size; ++i) 
+ { 
+  char buffer[100]; 
+  char buffer1[100]; 
+  cout << "Введите название книги "; 
+  cin.getline(buffer,100); 
+  names[i] = new char[strlen(buffer)]; 
+  strcpy(names[i], buffer); 
+  cout << "Введите автора книги "; 
+  cin.getline(buffer1,100); 
+  author[i] = new char[strlen(buffer1)]; 
+  strcpy(author[i], buffer1); 
+  cout << "Введите год издания книги "; 
+  cin >> god[i]; 
+  cout << "Введите количество копий "; 
+  cin >> kopii[i]; 
+  cin.ignore(); 
+ } 
+ for (int i = 0; i<size-1; ++i) 
+ { 
+  for (int j = 0; j<size-i-1; ++j) 
+  { 
+   if (strcmp(names[j], names[j+1])>0) 
+   { 
+    swap(names[j], names[j+1]); 
+    swap(author[j], author[j+1]); 
+    swap(god[j], god[j+1]); 
+    swap(kopii[j], kopii[j+1]); 
+   } 
+  } 
+ } 
+ for (int i = 0; i<size; ++i) 
+ { 
+  cout << names[i] << ":"<< " Автор - " << author[i] << ",  Год издания - " << god[i] <<"г"<< " , Количество копий - " << kopii[i]<< endl;  
+ } 
+ delete [] names;
+ delete [] author;
+ delete [] god;
+ delete [] kopii;
+ return 0; 
 }
+
 
 
 
