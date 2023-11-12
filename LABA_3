@@ -1,0 +1,177 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+struct Book {
+    std::string fullName, avtor;
+    int god;
+};
+
+void addBookToFile(const Book& book) {
+    std::ofstream outFile("books.txt", std::ios::app);
+    if (outFile.is_open()) {
+        outFile << book.fullName << "," << book.avtor << "," << book.god << std::endl;
+        outFile.close();
+        std::cout << "Книга успешно добавлена." << std::endl;
+    }
+    else {
+        std::cerr << "Не удалось открыть файл для записи." << std::endl;
+    }
+}
+
+void searchBookByName(const std::string& name) {
+    std::ifstream inFile("books.txt");
+    if (inFile.is_open()) {
+        std::string line;
+        bool found = false;
+        while (std::getline(inFile, line)) {
+            size_t pos = line.find(',');
+            std::string fullName = line.substr(0, pos);
+            if (fullName == name) {
+                std::cout << "Найдена книга: " << line << std::endl;
+                found = true;
+                break;
+            }
+        }
+        inFile.close();
+        if (!found) {
+            std::cout << "Книга с таким именем не найдена." << std::endl;
+        }
+    }
+    else {
+        std::cerr << "Не удалось открыть файл для чтения." << std::endl;
+    }
+}
+void sortBooksByGrade() {
+    std::ifstream inFile("books.txt");
+    if (inFile.is_open()) { // Чтение данных и сортировка (пузырьковая сортировка)
+        std::string lines[100]; // Предполагаем, что не более 100 студентов
+        int count = 0;
+        std::string line;
+        while (std::getline(inFile, line)) {
+            lines[count] = line;
+            count++;
+        }
+        inFile.close();
+        for (int i = 0; i < count - 1; i++) {
+            for (int j = 0; j < count - i - 1; j++) {
+                size_t pos1 = lines[j].find_last_of(',');
+                size_t pos2 = lines[j + 1].find_last_of(',');
+                int god1 = std::stod(lines[j].substr(pos1 + 1));
+                int god2 = std::stod(lines[j + 1].substr(pos2 + 1));
+                if (god1 < god2) {
+                    std::swap(lines[j], lines[j + 1]);
+                }
+            }
+        }
+        // Запись отсортированных данных обратно в файл
+        std::ofstream outFile("books.txt");
+        if (outFile.is_open()) {
+            for (int i = 0; i < count; i++) {
+                outFile << lines[i] << std::endl;
+            }
+            outFile.close();
+            std::cout << "Книги отсортированы по году выпуска." << std::endl;
+        }
+        else {
+            std::cerr << "Не удалось открыть файл для записи." << std::endl;
+        }
+    }
+    else {
+        std::cerr << "Не удалось открыть файл для чтения." << std::endl;
+    }
+}
+
+void searchBookBycugod(const int& curgod) {
+    std::ifstream inFile("books.txt");
+    if (inFile.is_open()) {
+        std::string line;
+        int cnt = 0;
+        bool found = false;
+        while (std::getline(inFile, line)) {
+            int pos = line.find_last_of(',');
+            int god = std::stoi(line.substr(pos + 1));
+            if (god <= curgod) {
+                if (cnt == 0) {
+                    std::cout << "Найдены книги: " << std::endl << line << std::endl;
+                    found = true;
+                    cnt++;
+                }
+                else std::cout << line << std::endl;
+            }
+        }
+        inFile.close();
+        if (!found) {
+            std::cout << "Книги до " << curgod << " не найдены" << std::endl;
+        }
+    }
+    else {
+        std::cerr << "Не удалось открыть файл для чтения." << std::endl;
+    }
+}
+
+int main() {
+    int choice;
+    std::string name;
+    setlocale(LC_ALL, "russian");
+
+    do {
+        std::cout << "Меню:" << std::endl;
+        std::cout << "1. Добавить книгу" << std::endl;          
+        std::cout << "2. Поиск книги по названию" << std::endl;
+        std::cout << "3. Сортировать книги по дате выпуска" << std::endl;    
+        std::cout << "4. Поиск книг до n года" << std::endl;    
+        std::cout << "0. Выйти" << std::endl;
+        std::cout << "Выберите действие: ";        
+        std::cin >> choice;
+        switch (choice) {
+        case 1: {            
+            std::cin.ignore();
+            std::string fullName, avtor;            
+            int god;
+            std::cout << "Введите название книги: ";            
+            std::getline(std::cin, fullName);
+            if (fullName.empty()) {
+                std::cout << "Ввод прерван." << std::endl;
+                break;
+            }
+            std::cout << "Введите автора книги: ";            
+            std::getline(std::cin, avtor);
+            std::cout << "Введите год выпуска: ";            
+            std::cin >> god;
+            Book newBook = { fullName, avtor, god };            
+            addBookToFile(newBook);
+            break;        
+        }
+        case 2: {
+            std::cin.ignore();            
+            std::cout << "Введите название книги для поиска: ";
+            std::getline(std::cin, name);            
+            searchBookByName(name);
+            break;        
+        }
+        case 3: {            
+            sortBooksByGrade();
+            break;        
+        }
+        case 4: {
+            std::cin.ignore();
+            std::cout << "Введите название книги для поиска: ";
+            int curgod;
+            std::cin >> curgod;
+            searchBookBycugod(curgod);
+            break;
+        }
+        case 0: {            
+            std::cout << "Программа завершена." << std::endl;
+            break;        
+        }
+        default: {            
+            std::cout << "Неверный выбор. Попробуйте снова." << std::endl;
+            break;        
+        }
+        }
+    } while (choice != 0);
+
+    return 0;
+}
