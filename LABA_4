@@ -1,0 +1,177 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+
+template <typename T1, typename T2>
+class Pair {
+public:
+    T1 first;
+    T2 second;
+
+    Pair(const T1& f, const T2& s) : first(f), second(s) {}
+};
+
+class Book {
+public:
+    std::string title;
+    std::string author;
+    std::string genre;
+
+    Book(const std::string& t, const std::string& a, const std::string& g)
+        : title(t), author(a), genre(g) {}
+
+    virtual void displayInfo() const {
+        std::cout << "Title: " << title << ", Author: " << author << ", Genre: " << genre << std::endl;
+    }
+};
+
+class Fiction : public Book {
+public:
+    Fiction(const std::string& t, const std::string& a) : Book(t, a, "Fiction") {}
+
+    void displayInfo() const override {
+        std::cout << "Fiction Book - ";
+        Book::displayInfo();
+    }
+};
+
+class NonFiction : public Book {
+public:
+    NonFiction(const std::string& t, const std::string& a) : Book(t, a, "NonFiction") {}
+
+    void displayInfo() const override {
+        std::cout << "Non-Fiction Book - ";
+        Book::displayInfo();
+    }
+};
+
+class Library {
+private:
+    std::vector<Book*> books;
+
+public:
+    void addBook() {
+        std::string title, author, genre;
+        std::cout << "Enter book title: ";
+        std::cin >> title;
+        std::cout << "Enter book author: ";
+        std::cin >> author;
+        std::cout << "Enter book genre: ";
+        std::cin >> genre;
+
+        Book* book = new Book(title, author, genre);
+        books.push_back(book);
+
+        std::cout << "Book added successfully." << std::endl;
+    }
+    ~Library() {
+        for (auto& book : books) {
+            delete book;
+        }
+    }
+    Book* searchBook() {
+        std::string title;
+        std::cout << "Enter book title to search: ";
+        std::cin >> title;
+
+        auto it = std::find_if(books.begin(), books.end(), [title](const Book* b) { return b->title == title; });
+        return (it != books.end()) ? *it : nullptr;
+    }
+
+    void sortBooksByAuthor() {
+        std::sort(books.begin(), books.end(), [](const Book* a, const Book* b) {
+            return a->author < b->author;
+            });
+        std::cout << "Books sorted by author." << std::endl;
+    }
+
+    void addProduct() {
+        // Your implementation for adding a product goes here
+        std::cout << "Functionality for adding a product is not implemented." << std::endl;
+    }
+
+    void searchProduct() {
+        // Your implementation for searching a product goes here
+        std::cout << "Functionality for searching a product is not implemented." << std::endl;
+    }
+
+    void saveToFile(const std::string& filename) const {
+        std::ofstream file(filename);
+        if (file.is_open()) {
+            for (const auto& book : books) {
+                file << book->title << "," << book->author << "," << book->genre << std::endl;
+            }
+            file.close();
+            std::cout << "Data saved to file: " << filename << std::endl;
+        }
+    }
+
+    void modifyBookGenre(const std::string& bookTitle, const std::string& newGenre) {
+        auto it = std::find_if(books.begin(), books.end(), [bookTitle](const Book* b) { return b->title == bookTitle; });
+        if (it != books.end()) {
+            (*it)->genre = newGenre;
+        }
+    }
+
+    void displayMenu() {
+        int choice;
+        do {
+            std::cout << "\nMenu:\n";
+            std::cout << "1. Add Book\n";
+            std::cout << "2. Search Book\n";
+            std::cout << "3. Sort Books by Author\n";
+            std::cout << "4. Add Product\n";
+            std::cout << "5. Search Product\n";
+            std::cout << "6. Save to File\n";
+            std::cout << "0. Exit\n";
+            std::cout << "Enter your choice: ";
+            std::cin >> choice;
+
+            switch (choice) {
+            case 1:
+                addBook();
+                break;
+            case 2:
+            {
+                Book* foundBook = searchBook();
+                if (foundBook) {
+                    foundBook->displayInfo();
+                }
+                else {
+                    std::cout << "Book not found." << std::endl;
+                }
+            }
+            break;
+            case 3:
+                sortBooksByAuthor();
+                break;
+            case 4:
+                addProduct();
+                break;
+            case 5:
+                searchProduct();
+                break;
+            case 6:
+            {
+                std::string filename;
+                std::cout << "Enter filename to save: ";
+                std::cin >> filename;
+                saveToFile(filename);
+            }
+            break;
+            case 0:
+                std::cout << "Exiting program.\n";
+                break;
+            default:
+                std::cout << "Invalid choice. Please enter a number from the menu.\n";
+            }
+        } while (choice != 0);
+    }
+};
+
+int main() {
+    Library library;
+    library.displayMenu();
+    return 0;
+}
