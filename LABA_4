@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 
+// Шаблонный класс Pair для хранения пары значений разных типов
 template <typename T1, typename T2>
 class Pair {
 public:
@@ -12,90 +13,106 @@ public:
     Pair(const T1& f, const T2& s) : first(f), second(s) {}
 };
 
+// Класс Book представляет книгу с основной информацией
 class Book {
 public:
     std::string title;
     std::string author;
     std::string genre;
 
+    // Конструктор для инициализации информации о книге
     Book(const std::string& t, const std::string& a, const std::string& g)
         : title(t), author(a), genre(g) {}
 
+    // Виртуальная функция для отображения информации о книге
     virtual void displayInfo() const {
-        std::cout << "Title: " << title << ", Author: " << author << ", Genre: " << genre << std::endl;
+        std::cout << "Название: " << title << ", Автор: " << author << ", Жанр: " << genre << std::endl;
     }
 };
 
+// Класс Fiction представляет книгу жанра "Художественная литература"
 class Fiction : public Book {
 public:
-    Fiction(const std::string& t, const std::string& a) : Book(t, a, "Fiction") {}
+    // Конструктор для инициализации художественной книги
+    Fiction(const std::string& t, const std::string& a) : Book(t, a, "Художественная литература") {}
 
+    // Переопределение функции отображения для вывода информации о жанре
     void displayInfo() const override {
-        std::cout << "Fiction Book - ";
+        std::cout << "Художественная книга - ";
         Book::displayInfo();
     }
 };
 
+// Класс NonFiction представляет книгу жанра "Научная литература"
 class NonFiction : public Book {
 public:
-    NonFiction(const std::string& t, const std::string& a) : Book(t, a, "NonFiction") {}
+    // Конструктор для инициализации научной книги
+    NonFiction(const std::string& t, const std::string& a) : Book(t, a, "Научная литература") {}
 
+    // Переопределение функции отображения для вывода информации о жанре
     void displayInfo() const override {
-        std::cout << "Non-Fiction Book - ";
+        std::cout << "Научная книга - ";
         Book::displayInfo();
     }
 };
 
+// Класс Library представляет библиотеку с методами управления книгами
 class Library {
 private:
-    std::vector<Book*> books;
+    std::vector<Book*> books; // Вектор указателей на книги
 
 public:
+    // Метод для добавления новой книги в библиотеку
     void addBook() {
         std::string title, author, genre;
-        std::cout << "Enter book title: ";
+        std::cout << "Введите название книги: ";
         std::cin >> title;
-        std::cout << "Enter book author: ";
+        std::cout << "Введите автора книги: ";
         std::cin >> author;
-        std::cout << "Enter book genre: ";
+        std::cout << "Введите жанр книги: ";
         std::cin >> genre;
 
         Book* book = new Book(title, author, genre);
         books.push_back(book);
 
-        std::cout << "Book added successfully." << std::endl;
+        std::cout << "Книга успешно добавлена." << std::endl;
     }
+
+    // Деструктор для освобождения памяти от книг при завершении программы
     ~Library() {
         for (auto& book : books) {
             delete book;
         }
     }
+
+    // Метод для поиска книги по названию
     Book* searchBook() {
         std::string title;
-        std::cout << "Enter book title to search: ";
+        std::cout << "Введите название книги для поиска: ";
         std::cin >> title;
 
         auto it = std::find_if(books.begin(), books.end(), [title](const Book* b) { return b->title == title; });
         return (it != books.end()) ? *it : nullptr;
     }
 
+    // Метод для сортировки книг по автору
     void sortBooksByAuthor() {
         std::sort(books.begin(), books.end(), [](const Book* a, const Book* b) {
             return a->author < b->author;
             });
-        std::cout << "Books sorted by author." << std::endl;
+        std::cout << "Книги отсортированы по автору." << std::endl;
     }
 
+    // Дополнительные методы для функциональности, которая не реализована в данном коде
     void addProduct() {
-        // Your implementation for adding a product goes here
-        std::cout << "Functionality for adding a product is not implemented." << std::endl;
+        std::cout << "Функциональность добавления продукта не реализована." << std::endl;
     }
 
     void searchProduct() {
-        // Your implementation for searching a product goes here
-        std::cout << "Functionality for searching a product is not implemented." << std::endl;
+        std::cout << "Функциональность поиска продукта не реализована." << std::endl;
     }
 
+    // Метод для сохранения информации о книгах в файл
     void saveToFile(const std::string& filename) const {
         std::ofstream file(filename);
         if (file.is_open()) {
@@ -103,10 +120,11 @@ public:
                 file << book->title << "," << book->author << "," << book->genre << std::endl;
             }
             file.close();
-            std::cout << "Data saved to file: " << filename << std::endl;
+            std::cout << "Данные сохранены в файл: " << filename << std::endl;
         }
     }
 
+    // Метод для изменения жанра книги по её названию
     void modifyBookGenre(const std::string& bookTitle, const std::string& newGenre) {
         auto it = std::find_if(books.begin(), books.end(), [bookTitle](const Book* b) { return b->title == bookTitle; });
         if (it != books.end()) {
@@ -114,18 +132,19 @@ public:
         }
     }
 
+    // Метод для отображения пользовательского меню
     void displayMenu() {
         int choice;
         do {
-            std::cout << "\nMenu:\n";
-            std::cout << "1. Add Book\n";
-            std::cout << "2. Search Book\n";
-            std::cout << "3. Sort Books by Author\n";
-            std::cout << "4. Add Product\n";
-            std::cout << "5. Search Product\n";
-            std::cout << "6. Save to File\n";
-            std::cout << "0. Exit\n";
-            std::cout << "Enter your choice: ";
+            std::cout << "\nМеню:\n";
+            std::cout << "1. Добавить книгу\n";
+            std::cout << "2. Поиск книги\n";
+            std::cout << "3. Сортировка книг по автору\n";
+            std::cout << "4. Добавить продукт\n";
+            std::cout << "5. Поиск продукта\n";
+            std::cout << "6. Сохранить в файл\n";
+            std::cout << "0. Выход\n";
+            std::cout << "Введите ваш выбор: ";
             std::cin >> choice;
 
             switch (choice) {
@@ -134,44 +153,4 @@ public:
                 break;
             case 2:
             {
-                Book* foundBook = searchBook();
-                if (foundBook) {
-                    foundBook->displayInfo();
-                }
-                else {
-                    std::cout << "Book not found." << std::endl;
-                }
-            }
-            break;
-            case 3:
-                sortBooksByAuthor();
-                break;
-            case 4:
-                addProduct();
-                break;
-            case 5:
-                searchProduct();
-                break;
-            case 6:
-            {
-                std::string filename;
-                std::cout << "Enter filename to save: ";
-                std::cin >> filename;
-                saveToFile(filename);
-            }
-            break;
-            case 0:
-                std::cout << "Exiting program.\n";
-                break;
-            default:
-                std::cout << "Invalid choice. Please enter a number from the menu.\n";
-            }
-        } while (choice != 0);
-    }
-};
-
-int main() {
-    Library library;
-    library.displayMenu();
-    return 0;
-}
+                Book* foundBook = searchBook
